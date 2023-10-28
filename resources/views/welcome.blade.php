@@ -29,24 +29,30 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript">
-        $(function() {
+        $(document).ready(function() {
             $('#user_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{!! route('welcome') !!}',
-                columns: [
-                    { data: 'name', name: 'name' },
-                    { data: 'email', name: 'email' },
+                "processing": true,
+                "serverSide": true,
+                "paging": true,
+                "ajax": "{{ route('welcome') }}",
+                "columns": [{
+                        "data": "name",
+                        "name": "name"
+                    },
                     {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
+                        "data": "email",
+                        "name": "email"
+                    },
+                    {
+                        "data": "action",
+                        "name": "action",
+                        "orderable": false,
+                        "searchable": false
                     }
                 ]
             });
         });
-    
+
         function deleteUser(id) {
             Swal.fire({
                 title: 'Are you sure?',
@@ -67,7 +73,7 @@
                         success: function(response) {
                             Swal.fire(
                                 'Deleted!',
-                                'User with ID ' + id + ' has been successfully deleted.',
+                                'Berhasil menghapus users',
                                 'success'
                             ).then(() => {
                                 $('#user_table').DataTable().ajax.reload();

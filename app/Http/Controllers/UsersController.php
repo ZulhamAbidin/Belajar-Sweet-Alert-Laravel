@@ -9,24 +9,25 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UsersController extends Controller
 {
+    public function index(Request $request)
+    {
+        if ($request->ajax()) {
+            $users = User::select('*');
+            return Datatables::of($users)
+                ->addColumn('action', function ($user) {
+                    return '<a href="' .
+                        route('users.edit', $user->id) .
+                        '" class="btn btn-primary">Edit</a>
+                <button type="button" onclick="deleteUser(' .
+                        $user->id .
+                        ')" class="btn btn-danger">Delete</button>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
 
-public function index(Request $request)
-{
-    if ($request->ajax()) {
-        $users = User::select('*');
-        return Datatables::of($users)
-            ->addColumn('action', function ($user) {
-                return '<a href="'.route('users.edit', $user->id).'" class="btn btn-primary">Edit</a>
-                <button type="button" onclick="deleteUser('.$user->id.')" class="btn btn-danger">Delete</button>';
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+        return view('welcome');
     }
-    
-    return view('welcome');
-}
-
-
 
     public function create()
     {
@@ -68,19 +69,16 @@ public function index(Request $request)
         return redirect()->route('welcome');
     }
 
+    public function destroy($id)
+    {
+        $user = User::find($id);
 
-public function destroy($id)
-{
-    $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
 
-    if (!$user) {
-        return response()->json(['error' => 'User not found'], 404);
+        $user->delete();
+
+        return response()->json(['success' => 'User deleted'], 200);
     }
-
-    $user->delete();
-
-    return response()->json(['success' => 'User deleted'], 200);
-}
-
-
 }
